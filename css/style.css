@@ -1,13 +1,23 @@
+*{
+  background-color: lightblue;
+  font-family: 'Over the Rainbow';
+}
+
 div {
     float: left;
     margin: 40px;
-    border: solid black 1px;
+    border: solid purple 7px;
+    text-align: center
   }
   
   img {
     height: 200px;
+    margin left: auto;
+    margin right: auto;
   }
   
   h1 {
     text-align: center;
+    Font-family: 'Over the Rainbow';
+    font-size: 32px;
   }

@@ -2,13 +2,13 @@
 
 //Constructor function for the Horns
 function Horn(obj){
-  this.image_url = obj.image_url;
+  this.image_url = `<img src="${obj.image_url}"`;
   this.title = obj.title;
   this.description = obj.description;
   this.keyword = obj.keyword
   this.horns = obj.horns
-  this.class = obj.keyword
-  allImages.push(this);
+  // this.class = obj.keyword
+  // allImages.push(this);
 }
 
 
@@ -16,25 +16,46 @@ function Horn(obj){
 //Arrays for images
 let allImages = [];
 let uniqueImages =[];
+let hornspage1 = [];
+let hornspage2 = [];
 
-//Creating render prototype
-Horn.prototype.render = function() {
-  $('main').append('<div class="hornhere"></div>');
+Horn.prototype.toHTML = function(){
+  let templateHtml = $('#horns_template').html();
+  let hornTemplate = Handlebars.compile(templateHtml);
+  let newHorn =  hornTemplate(this);
+  return newHorn;
+}
 
-  let $hornhere = $('div[class="hornhere"]');
-  let hornTemplate = $('#template').html();
+// New render function, refer to old render function below
+function renderPage (array){
+ $('main').empty();
+ $('#keyword').empty().html('<option value="default">-- Keyword --</option>');
+ uniqueImages = [];
+ array.forEach( horn => {
+  $('main').append(horn.toHTML());
+   horn.menu();
+ });
+}
+
+// Below section probably will not be needed
+// //Creating render prototype
+// Horn.prototype.render = function() {
+//   $('main').append('<div class="hornhere"></div>');
+
+//   let $hornhere = $('div[class="hornhere"]');
+//   let hornTemplate = $('#template').html();
 
   
-  $hornhere.html(hornTemplate);
+//   $hornhere.html(hornTemplate);
 
-  // push in the content from constructed objects
-  $hornhere.find('h2').text(this.title);
-  $hornhere.find('p').text(this.description);
-  $hornhere.find('img').attr('src', this.image_url);
-  $hornhere.find('h6').text('This being has ' + this.horns + ' horns!')
-  $hornhere.removeClass('hornhere');
-  $hornhere.attr('class', this.keyword);
-}
+//   // push in the content from constructed objects
+//   $hornhere.find('h2').text(this.title);
+//   $hornhere.find('p').text(this.description);
+//   $hornhere.find('img').attr('src', this.image_url);
+//   $hornhere.find('h6').text('This being has ' + this.horns + ' horns!')
+//   $hornhere.removeClass('hornhere');
+//   $hornhere.attr('class', this.keyword);
+// }
 
 //Horn menu prototype for selecting horns
 Horn.prototype.menu = function(){
@@ -52,16 +73,26 @@ function readJson () {
   $.get('data/page-1.json', 'json')
     .then(data => {
       data.forEach(hornObj => {
-        new Horn(hornObj);
+        hornspage1.push(new Horn(hornObj));
       });
-    })
-    .then(function() {
-      allImages.forEach( horn =>{
-        horn.render();
-        horn.menu();
+    });
+    $.get('data/page-2.json', 'json')
+    .then(data => {
+      data.forEach( hornObj => {
+        hornspage2.push(new Horn(hornObj));
       });
     });
 }
+
+//render on button click
+  $('#hornspage1').on('click', function(){
+    renderPage(hornspage1);
+  });
+
+  $('#hornspage2').on('click', function(){
+    renderPage(hornspage2);
+  });
+
 
 $('#keyword').on('change', function() {
   let selection = $(this).val();
